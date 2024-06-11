@@ -4,7 +4,9 @@ from .rest_adapter import Result
 
 
 class Route:
-    def __init__(self, index: int, name: str, description: str, utterances: List[str]):
+    def __init__(
+        self, index: int, name: str, description: str, utterances: List[str] = []
+    ):
         self.index = index
         self.name = name
         self.description = description
