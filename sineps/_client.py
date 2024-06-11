@@ -2,7 +2,12 @@ import logging
 import json
 
 from .rest_adapter import RestAdapter
-from .utils import add_index_to_dictionary_list, uppercase_keys
+from .utils import (
+    add_index_to_dictionary_list,
+    uppercase_keys,
+    validate_route_dict,
+    validate_filed_dict,
+)
 from .intent_router import IntentRouterResponse
 from .filter_extractor import FilterExtractorResponse
 
@@ -26,6 +31,9 @@ class Client:
     def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False
     ):
+        for route in routes:
+            validate_route_dict(route)
+
         routes = add_index_to_dictionary_list(routes)
         if allow_none:
             option = "single_none"
@@ -36,6 +44,8 @@ class Client:
         return IntentRouterResponse(result, routes)
 
     def exec_filter_extractor(self, query: str, field: dict = {}):
+        validate_filed_dict(field)
+
         field = uppercase_keys(field)
         field_str = json.dumps(field)
         data = {"natural_language_query": query, "metadata_schema": field_str}
