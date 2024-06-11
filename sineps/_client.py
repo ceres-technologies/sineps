@@ -34,7 +34,7 @@ class Client:
         for route in routes:
             validate_route_dict(route)
 
-        data = {"query": query, "routes": routes, "alow_none": allow_none}
+        data = {"query": query, "routes": routes, "allow_none": allow_none}
         result = self._rest_adapter.post("/intent-router", data=data)
         return IntentRouterResponse(result, routes)
 
