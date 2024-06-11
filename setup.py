@@ -17,5 +17,6 @@ setuptools.setup(
     url=" ",
     install_requires=[
         "requests>=2.24.0",
+        "aiohttp>=3.6.2",
     ],
 )

@@ -1,3 +1,6 @@
+# vscode
+.vscode/
+
 # test file
 test_filter_extractor.py
 test_intent_router.py

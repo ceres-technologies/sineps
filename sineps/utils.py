@@ -2,20 +2,12 @@ from .exceptions import TheSinepsApiException
 
 
 def add_index_to_dictionary_list(dict_list: list):
+    new_dict_list = []
     for i, item in enumerate(dict_list):
-        item["index"] = i
-    return dict_list
-
-
-def uppercase_keys(input_dict):
-    new_dict = {}
-    for key, value in input_dict.items():
-        if isinstance(key, str) and key.isascii():
-            new_key = key.upper()
-        else:
-            new_key = key
-        new_dict[new_key] = value
-    return new_dict
+        new_item = item.copy()
+        new_item["index"] = i
+        new_dict_list.append(new_item)
+    return new_dict_list
 
 
 def validate_route_dict(route_dict: dict):
