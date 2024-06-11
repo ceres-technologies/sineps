@@ -4,3 +4,7 @@ class TheSinepsApiException(Exception):
 
 class TheRestAdapterException(Exception):
     pass
+
+
+class TheAsyncRestAdapterException(Exception):
+    pass
