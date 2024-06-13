@@ -1,13 +1,17 @@
 import logging
 
-from .rest_adapter import RestAdapter, AsyncRestAdapter
-from .utils import (
+from ._rest_adapter import RestAdapter, AsyncRestAdapter
+from ._utils import (
     validate_route_dict,
     validate_filed_dict,
 )
 from .intent_router import IntentRouterResponse
 from .filter_extractor import FilterExtractorResponse
-from .exceptions import TheSinepsApiException
+from ._exceptions import (
+    TheSinepsException,
+    TheSinepsClientException,
+    TheSinepsAsyncClientException,
+)
 
 
 class BaseClient:
@@ -18,6 +22,7 @@ class BaseClient:
         ssl_verify: bool = True,
         logger: logging.Logger = None,
         adapter_class=None,
+        exception_class=None,
     ):
         self._rest_adapter = adapter_class(
             hostname="api.sineps.io",
@@ -25,18 +30,19 @@ class BaseClient:
             ver=ver,
             ssl_verify=ssl_verify,
             logger=logger,
+            exception_class=exception_class,
         )
         self._check_api_key()
 
     def _check_api_key(self):
         if not self._rest_adapter._api_key:
-            raise TheSinepsApiException("SINEPS API key is required")
+            raise TheSinepsException("SINEPS API key is required")
 
     def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False
     ):
         if len(routes) == 0:
-            raise TheSinepsApiException("At least one route must be provided")
+            raise TheSinepsException("At least one route must be provided")
         for route in routes:
             validate_route_dict(route)
 
@@ -58,7 +64,14 @@ class Client(BaseClient):
         ssl_verify: bool = True,
         logger: logging.Logger = None,
     ):
-        super().__init__(api_key, ver, ssl_verify, logger, RestAdapter)
+        super().__init__(
+            api_key,
+            ver,
+            ssl_verify,
+            logger,
+            RestAdapter,
+            exception_class=TheSinepsClientException,
+        )
 
     def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False
@@ -81,7 +94,14 @@ class AsyncClient(BaseClient):
         ssl_verify: bool = True,
         logger: logging.Logger = None,
     ):
-        super().__init__(api_key, ver, ssl_verify, logger, AsyncRestAdapter)
+        super().__init__(
+            api_key,
+            ver,
+            ssl_verify,
+            logger,
+            AsyncRestAdapter,
+            exception_class=TheSinepsAsyncClientException,
+        )
 
     async def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False

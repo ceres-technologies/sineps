@@ -1,7 +1,7 @@
 import json
 
-from .exceptions import TheSinepsApiException
-from .rest_adapter import Result
+from ._exceptions import TheSinepsException
+from ._rest_adapter import Result
 
 
 class FilterExtractorResponse:
@@ -14,7 +14,7 @@ class FilterExtractorResponse:
         try:
             filter = json.loads(filter_str)
         except json.JSONDecodeError as e:
-            raise TheSinepsApiException(
+            raise TheSinepsException(
                 "The filter in the response is not valid JSON"
             ) from e
         return filter

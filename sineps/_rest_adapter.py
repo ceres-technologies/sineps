@@ -5,7 +5,10 @@ from typing import List, Dict
 import logging
 from json import JSONDecodeError
 
-from .exceptions import TheRestAdapterException, TheAsyncRestAdapterException
+from ._exceptions import (
+    TheRestAdapterException,
+    TheAsyncRestAdapterException,
+)
 
 
 class Result:
@@ -29,6 +32,11 @@ class BaseRestAdapter:
         self._api_key = api_key
         self._ssl_verify = ssl_verify
 
+    def _define_exception_class(self, exception_class, base_exception_class):
+        if exception_class:
+            return exception_class
+        return base_exception_class
+
     def _build_log_lines(self, http_method: str, endpoint: str, ep_params: Dict):
         full_url = self.url + endpoint
         log_line_pre = f"method={http_method}, url={full_url}, params={ep_params}"
@@ -49,6 +57,14 @@ class BaseRestAdapter:
 
 
 class RestAdapter(BaseRestAdapter):
+    def __init__(
+        self, hostname, api_key, ver, ssl_verify, logger, exception_class=None
+    ):
+        super().__init__(hostname, api_key, ver, ssl_verify, logger)
+        self._exception_class = self._define_exception_class(
+            exception_class, TheRestAdapterException
+        )
+
     def _do(
         self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None
     ):
@@ -72,13 +88,13 @@ class RestAdapter(BaseRestAdapter):
             )
         except requests.exceptions.RequestException as e:
             self._logger.error(msg=(str(e)))
-            raise TheRestAdapterException("Request failed") from e
+            raise self._exception_class("Request failed") from e
 
         try:
             data_out = response.json()
         except (ValueError, JSONDecodeError) as e:
             self._logger.error(msg=log_line_post.format(False, None, e))
-            raise TheRestAdapterException("Bad JSON in response") from e
+            raise self._exception_class("Bad JSON in response") from e
 
         is_success = 299 >= response.status_code >= 200
         self._log_and_raise_exception(
@@ -86,7 +102,7 @@ class RestAdapter(BaseRestAdapter):
             is_success,
             response.status_code,
             response.reason,
-            TheRestAdapterException(f"{response.status_code}: {response.reason}"),
+            self._exception_class(f"{response.status_code}: {response.reason}"),
         )
 
         return Result(response.status_code, message=response.reason, data=data_out)
@@ -108,6 +124,15 @@ class RestAdapter(BaseRestAdapter):
 
 
 class AsyncRestAdapter(BaseRestAdapter):
+
+    def __init__(
+        self, hostname, api_key, ver, ssl_verify, logger, exception_class=None
+    ):
+        super().__init__(hostname, api_key, ver, ssl_verify, logger)
+        self._exception_class = self._define_exception_class(
+            exception_class, TheAsyncRestAdapterException
+        )
+
     async def _do(
         self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None
     ):
@@ -134,9 +159,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                         data_out = await response.json()
                     except (ValueError, JSONDecodeError) as e:
                         self._logger.error(msg=log_line_post.format(False, None, e))
-                        raise TheAsyncRestAdapterException(
-                            "Bad JSON in response"
-                        ) from e
+                        raise self._exception_class("Bad JSON in response") from e
 
                     is_success = 299 >= response.status >= 200
                     self._log_and_raise_exception(
@@ -144,9 +167,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                         is_success,
                         response.status,
                         response.reason,
-                        TheAsyncRestAdapterException(
-                            f"{response.status}: {response.reason}"
-                        ),
+                        self._exception_class(f"{response.status}: {response.reason}"),
                     )
 
                     return Result(
@@ -154,7 +175,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                     )
         except aiohttp.ClientError as e:
             self._logger.error(msg=(str(e)))
-            raise TheAsyncRestAdapterException("Request failed") from e
+            raise self._exception_class("Request failed") from e
 
     async def get(self, endpoint: str, ep_params: Dict = None) -> Result:
         return await self._do(http_method="GET", endpoint=endpoint, ep_params=ep_params)
