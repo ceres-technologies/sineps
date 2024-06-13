@@ -10,10 +10,6 @@ class TheSinepsAsyncClientException(Exception):
     pass
 
 
-class TheBaseRestAdapterException(Exception):
-    pass
-
-
 class TheRestAdapterException(Exception):
     pass
 

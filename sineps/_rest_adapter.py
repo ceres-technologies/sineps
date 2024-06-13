@@ -6,7 +6,6 @@ import logging
 from json import JSONDecodeError
 
 from ._exceptions import (
-    TheBaseRestAdapterException,
     TheRestAdapterException,
     TheAsyncRestAdapterException,
 )
