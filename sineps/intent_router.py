@@ -1,6 +1,6 @@
 from typing import List
 
-from .rest_adapter import Result
+from ._rest_adapter import Result
 
 
 class Route:
