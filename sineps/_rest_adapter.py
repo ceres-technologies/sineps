@@ -10,6 +10,8 @@ from ._exceptions import (
     TheAsyncRestAdapterException,
 )
 
+from ._utils import handle_error_message
+
 
 class Result:
     def __init__(self, status_code: int, message: str = "", data: List[Dict] = None):
@@ -97,15 +99,16 @@ class RestAdapter(BaseRestAdapter):
             raise self._exception_class("Bad JSON in response") from e
 
         is_success = 299 >= response.status_code >= 200
+        message = handle_error_message(is_success, data_out)
         self._log_and_raise_exception(
             log_line_post,
             is_success,
             response.status_code,
-            response.reason,
-            self._exception_class(f"{response.status_code}: {response.reason}"),
+            message,
+            self._exception_class(f"{response.status_code}: {message}"),
         )
 
-        return Result(response.status_code, message=response.reason, data=data_out)
+        return Result(response.status_code, message=message, data=data_out)
 
     def get(self, endpoint: str, ep_params: Dict = None) -> Result:
         return self._do(http_method="GET", endpoint=endpoint, ep_params=ep_params)
@@ -162,17 +165,16 @@ class AsyncRestAdapter(BaseRestAdapter):
                         raise self._exception_class("Bad JSON in response") from e
 
                     is_success = 299 >= response.status >= 200
+                    message = handle_error_message(is_success, data_out)
                     self._log_and_raise_exception(
                         log_line_post,
                         is_success,
                         response.status,
-                        response.reason,
-                        self._exception_class(f"{response.status}: {response.reason}"),
+                        message,
+                        self._exception_class(f"{response.status}: {message}"),
                     )
 
-                    return Result(
-                        response.status, message=response.reason, data=data_out
-                    )
+                    return Result(response.status, message=message, data=data_out)
         except aiohttp.ClientError as e:
             self._logger.error(msg=(str(e)))
             raise self._exception_class("Request failed") from e
