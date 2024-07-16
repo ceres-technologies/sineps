@@ -114,7 +114,9 @@ def validate_filter_extractor_required(required):
         )
 
 
-def validate_field(field_dict: dict):
+def validate_field(field_dict):
+    if not isinstance(field_dict, dict):
+        raise InvalidFilterExtractorFormatException("The 'field' must be a dictionary.")
     required_keys = {"name", "description", "type"}
     optional_key = "values"
     allowed_types = {"string", "number", "list", "date"}
@@ -148,15 +150,20 @@ def validate_field(field_dict: dict):
     if len(field_dict["description"]) > max_field_description_length:
         raise InvalidFilterExtractorFormatException("Too long field description")
 
-    if field_dict["type"] not in allowed_types:
-        raise InvalidFilterExtractorFormatException(
-            f"The value of 'type' must be one of {allowed_types}."
-        )
-
     if optional_key in field_dict:
+
+        if not isinstance(field_dict["type"], str):
+            raise InvalidFilterExtractorFormatException(
+                f"The value of 'type' must be one of {allowed_types}."
+            )
+        if field_dict["type"] not in allowed_types:
+            raise InvalidFilterExtractorFormatException(
+                f"The value of 'type' must be one of {allowed_types}."
+            )
+
         if not field_dict["type"] in allowed_types_for_values:
             raise InvalidFilterExtractorFormatException(
-                f"The 'value' parameter is not allowed when the fields type is '{field_dict['type']}'."
+                f"The 'value' parameter is not allowed when the field type is '{field_dict['type']}'."
             )
         if not isinstance(field_dict[optional_key], list):
             raise InvalidFilterExtractorFormatException(
