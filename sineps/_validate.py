@@ -29,13 +29,15 @@ def validate_intent_router_allow_none(allow_none):
 
 def validate_intent_router_query(query):
     if not isinstance(query, str):
-        raise InvalidIntentRouterFormatException("The query must be a string")
+        raise InvalidIntentRouterFormatException("The 'query' must be a string")
     max_query_length = CONFIG_INTENT_ROUTER["max_query_length"]
     if len(query) > max_query_length:
         raise InvalidIntentRouterFormatException("Too long query")
 
 
 def validate_routes(routes):
+    if not isinstance(routes, list):
+        raise InvalidIntentRouterFormatException("The 'routes' must be a list")
     if len(routes) == 0:
         raise InvalidIntentRouterFormatException("At least one route must be provided")
     max_routes_num = CONFIG_INTENT_ROUTER["max_routes_num"]
@@ -89,7 +91,7 @@ def validate_route(route_dict: dict, route_index: int):
         for utterance_index, utterance in enumerate(route_dict["utterances"]):
             if len(utterance) > max_route_utterance_length:
                 raise InvalidIntentRouterFormatException(
-                    f"Too long utterance[{utterance_index}] of routes[{route_index}]"
+                    f"Too long utterances[{utterance_index}] of routes[{route_index}]"
                 )
 
     for key in route_dict.keys():
