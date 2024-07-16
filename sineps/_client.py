@@ -38,7 +38,7 @@ class BaseClient:
     def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False
     ):
-        # validate_intent_router_format(query, routes, allow_none)
+        validate_intent_router_format(query, routes, allow_none)
         data = {"query": query, "routes": routes, "allow_none": allow_none}
         return data
 
