@@ -6,8 +6,8 @@ import logging
 from json import JSONDecodeError
 
 from ._exceptions import (
-    TheRestAdapterException,
-    TheAsyncRestAdapterException,
+    RestAdapterException,
+    AsyncRestAdapterException,
 )
 
 from ._utils import handle_error_message
@@ -64,7 +64,7 @@ class RestAdapter(BaseRestAdapter):
     ):
         super().__init__(hostname, api_key, ver, ssl_verify, logger)
         self._exception_class = self._define_exception_class(
-            exception_class, TheRestAdapterException
+            exception_class, RestAdapterException
         )
 
     def _do(
@@ -105,7 +105,7 @@ class RestAdapter(BaseRestAdapter):
             is_success,
             response.status_code,
             message,
-            self._exception_class(f"{response.status_code}: {message}"),
+            self._exception_class(f"{response.status_code} - {message}"),
         )
 
         return Result(response.status_code, message=message, data=data_out)
@@ -133,7 +133,7 @@ class AsyncRestAdapter(BaseRestAdapter):
     ):
         super().__init__(hostname, api_key, ver, ssl_verify, logger)
         self._exception_class = self._define_exception_class(
-            exception_class, TheAsyncRestAdapterException
+            exception_class, AsyncRestAdapterException
         )
 
     async def _do(
@@ -171,7 +171,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                         is_success,
                         response.status,
                         message,
-                        self._exception_class(f"{response.status}: {message}"),
+                        self._exception_class(f"{response.status} - {message}"),
                     )
 
                     return Result(response.status, message=message, data=data_out)

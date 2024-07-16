@@ -1,18 +1,34 @@
-class TheSinepsException(Exception):
+class SinepsException(Exception):
     pass
 
 
-class TheSinepsClientException(Exception):
+class IntentRouterException(SinepsException):
     pass
 
 
-class TheSinepsAsyncClientException(Exception):
+class InvalidIntentRouterFormatException(IntentRouterException):
     pass
 
 
-class TheRestAdapterException(Exception):
+class FilterExtractorException(SinepsException):
     pass
 
 
-class TheAsyncRestAdapterException(Exception):
+class InvalidFilterExtractorFormatException(FilterExtractorException):
+    pass
+
+
+class SinepsClientException(Exception):
+    pass
+
+
+class SinepsAsyncClientException(Exception):
+    pass
+
+
+class RestAdapterException(Exception):
+    pass
+
+
+class AsyncRestAdapterException(Exception):
     pass
