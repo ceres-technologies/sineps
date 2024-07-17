@@ -238,8 +238,8 @@ Error codes are as followed:
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
 | 400         | `BadRequestError`          |
+| 401         | `UnauthorizedAPIKeyError`  |
 | 402         | `PaymentRequiredError`     |
-| 404         | `UnauthorizedAPIKeyError`  |
 | 429         | `TooManyRequestsError`     |
 | 500         | `InternalServerError`      |
 | N/A         | `APIConnectionError`       |

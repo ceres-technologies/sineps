@@ -67,14 +67,14 @@ class BaseRestAdapter:
                     status_code=status_code,
                     message=message,
                 )
-            elif status_code == 402:
-                raise PaymentRequiredError(
+            elif status_code == 401:
+                raise UnauthorizedAPIKeyError(
                     f"{status_code} - {message}",
                     status_code=status_code,
                     message=message,
                 )
-            elif status_code == 404:
-                raise UnauthorizedAPIKeyError(
+            elif status_code == 402:
+                raise PaymentRequiredError(
                     f"{status_code} - {message}",
                     status_code=status_code,
                     message=message,
