@@ -1,34 +1,57 @@
-class SinepsException(Exception):
+class APIError(Exception):
     pass
 
 
-class IntentRouterException(SinepsException):
+class IntentRouterError(APIError):
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message
+
+
+class InvalidIntentRouterFormatError(IntentRouterError):
     pass
 
 
-class InvalidIntentRouterFormatException(IntentRouterException):
+class FilterExtractorError(APIError):
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message
+
+
+class InvalidFilterExtractorFormatError(FilterExtractorError):
     pass
 
 
-class FilterExtractorException(SinepsException):
+class APIStatusError(APIError):
+    def __init__(self, text: str, status_code: int, message: str):
+        super().__init__(text)
+        self.status_code = status_code
+        self.message = message
+
+
+class APIConnectionError(APIError):
     pass
 
 
-class InvalidFilterExtractorFormatException(FilterExtractorException):
+class RestAdapterError(APIError):
     pass
 
 
-class SinepsClientException(Exception):
+class InternalServerError(APIStatusError):
     pass
 
 
-class SinepsAsyncClientException(Exception):
+class BadRequestError(APIStatusError):
     pass
 
 
-class RestAdapterException(Exception):
+class TooManyRequestsError(APIStatusError):
     pass
 
 
-class AsyncRestAdapterException(Exception):
+class UnauthorizedAPIKeyError(APIStatusError):
+    pass
+
+
+class PaymentRequiredError(APIStatusError):
     pass

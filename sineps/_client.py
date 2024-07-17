@@ -4,11 +4,7 @@ from ._rest_adapter import RestAdapter, AsyncRestAdapter
 from ._validate import validate_intent_router_format, validate_filter_extractor_format
 from .intent_router import IntentRouterResponse
 from .filter_extractor import FilterExtractorResponse
-from ._exceptions import (
-    SinepsException,
-    SinepsClientException,
-    SinepsAsyncClientException,
-)
+from ._exceptions import APIError, APIConnectionError
 
 
 class BaseClient:
@@ -33,7 +29,7 @@ class BaseClient:
 
     def _check_api_key(self):
         if not self._rest_adapter._api_key:
-            raise SinepsException("SINEPS API key is required")
+            raise APIError("SINEPS API key is required")
 
     def exec_intent_router(
         self, query: str, routes: list = [], allow_none: bool = False
@@ -64,7 +60,7 @@ class Client(BaseClient):
             ssl_verify,
             logger,
             RestAdapter,
-            exception_class=SinepsClientException,
+            exception_class=APIConnectionError,
         )
 
     def exec_intent_router(
@@ -96,7 +92,7 @@ class AsyncClient(BaseClient):
             ssl_verify,
             logger,
             AsyncRestAdapter,
-            exception_class=SinepsAsyncClientException,
+            exception_class=APIConnectionError,
         )
 
     async def exec_intent_router(

@@ -1,6 +1,6 @@
 import json
 
-from ._exceptions import FilterExtractorException
+from ._exceptions import FilterExtractorError
 from ._rest_adapter import Result
 
 
@@ -14,7 +14,7 @@ class FilterExtractorResponse:
         try:
             filter = json.loads(filter_str)
         except json.JSONDecodeError as e:
-            raise FilterExtractorException(
+            raise FilterExtractorError(
                 "The filter in the response is not valid JSON"
             ) from e
         return filter

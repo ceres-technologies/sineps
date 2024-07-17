@@ -6,9 +6,14 @@ import logging
 from json import JSONDecodeError
 
 from ._exceptions import (
-    RestAdapterException,
-    AsyncRestAdapterException,
+    RestAdapterError,
+    InternalServerError,
+    BadRequestError,
+    TooManyRequestsError,
+    UnauthorizedAPIKeyError,
+    PaymentRequiredError,
 )
+
 
 from ._utils import handle_error_message
 
@@ -54,7 +59,38 @@ class BaseRestAdapter:
         if success:
             self._logger.debug(msg=log_line)
         else:
-            self._logger.error(msg=log_line)
+            self._logger.debug(msg=log_line)
+
+            if status_code == 400:
+                raise BadRequestError(
+                    f"{status_code} - {message}",
+                    status_code=status_code,
+                    message=message,
+                )
+            elif status_code == 402:
+                raise PaymentRequiredError(
+                    f"{status_code} - {message}",
+                    status_code=status_code,
+                    message=message,
+                )
+            elif status_code == 404:
+                raise UnauthorizedAPIKeyError(
+                    f"{status_code} - {message}",
+                    status_code=status_code,
+                    message=message,
+                )
+            elif status_code == 429:
+                raise TooManyRequestsError(
+                    f"{status_code} - {message}",
+                    status_code=status_code,
+                    message=message,
+                )
+            elif status_code == 500:
+                raise InternalServerError(
+                    f"{status_code} - {message}",
+                    status_code=status_code,
+                    message=message,
+                )
             raise exception
 
 
@@ -64,7 +100,7 @@ class RestAdapter(BaseRestAdapter):
     ):
         super().__init__(hostname, api_key, ver, ssl_verify, logger)
         self._exception_class = self._define_exception_class(
-            exception_class, RestAdapterException
+            exception_class, RestAdapterError
         )
 
     def _do(
@@ -105,7 +141,7 @@ class RestAdapter(BaseRestAdapter):
             is_success,
             response.status_code,
             message,
-            self._exception_class(f"{response.status_code} - {message}"),
+            self._exception_class,
         )
 
         return Result(response.status_code, message=message, data=data_out)
@@ -133,7 +169,7 @@ class AsyncRestAdapter(BaseRestAdapter):
     ):
         super().__init__(hostname, api_key, ver, ssl_verify, logger)
         self._exception_class = self._define_exception_class(
-            exception_class, AsyncRestAdapterException
+            exception_class, RestAdapterError
         )
 
     async def _do(
