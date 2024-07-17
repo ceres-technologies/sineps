@@ -6,6 +6,8 @@ test_filter_extractor.py
 test_intent_router.py
 test_async_filter_extractor.py
 test_async_intent_router.py
+test_error.py
+test_server.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
