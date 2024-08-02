@@ -132,7 +132,7 @@ class RestAdapter(BaseRestAdapter):
             data_out = response.json()
         except (ValueError, JSONDecodeError) as e:
             self._logger.error(msg=log_line_post.format(False, None, e))
-            raise self._exception_class("Bad JSON in response") from e
+            raise self._exception_class(f"{response.status_code}") from e
 
         is_success = 299 >= response.status_code >= 200
         message = handle_error_message(is_success, data_out)
@@ -198,7 +198,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                         data_out = await response.json()
                     except (ValueError, JSONDecodeError) as e:
                         self._logger.error(msg=log_line_post.format(False, None, e))
-                        raise self._exception_class("Bad JSON in response") from e
+                        raise self._exception_class(f"{response.status_code}") from e
 
                     is_success = 299 >= response.status >= 200
                     message = handle_error_message(is_success, data_out)
