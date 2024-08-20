@@ -1,35 +1,52 @@
-from typing import List
+from typing import List, Union
 import json
 
 from ._rest_adapter import Response
+
 
 INDENT = 2
 
 
 class Route:
     def __init__(
-        self, index: int, name: str, description: str, utterances: List[str] = []
+        self,
+        name: str,
+        description: str,
+        utterances: List[str] = [],
+        index: Union[int, None] = None,
     ):
         self.index = index
         self.name = name
         self.description = description
         self.utterances = utterances
 
-    def to_dict(self):
-        return {
-            "Route": {
+    def to_str_dict(self):
+        if self.index is None:
+            return {
+                "name": self.name,
+                "description": self.description,
+                "utterances": self.utterances,
+            }
+        else:
+            return {
                 "index": self.index,
                 "name": self.name,
                 "description": self.description,
                 "utterances": self.utterances,
             }
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "utterances": self.utterances,
         }
 
     def __repr__(self, indent=INDENT):
         return json.dumps(self.to_dict(), indent=indent)
 
     def __str__(self, indent=INDENT):
-        return json.dumps(self.to_dict(), indent=indent)
+        return json.dumps(self.to_str_dict(), indent=indent)
 
 
 class Routes:
@@ -37,7 +54,7 @@ class Routes:
         self.routes = routes
 
     def to_dict(self):
-        return {"Routes": [route.to_dict() for route in self.routes]}
+        return [route.to_dict() for route in self.routes]
 
     def __repr__(self, indent=INDENT):
         return json.dumps(self.to_dict(), indent=indent)
@@ -58,15 +75,17 @@ class IntentRouterResponse:
             return [route["index"] for route in routes]
 
     def _get_result(self, data, all_routes):
+        if isinstance(all_routes, Routes):
+            all_routes = all_routes.to_dict()
         result_routes_indices = self._get_result_route_indices(data)
         result = Routes(
-            routes=[Route(index=i, **all_routes[i]) for i in result_routes_indices]
+            routes=[Route(**all_routes[i], index=i) for i in result_routes_indices]
         )
         return result
 
     def to_dict(self):
 
-        return {"IntentRouterResponse": {"result": self.result.to_dict()}}
+        return {"result": self.result.to_dict()}
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=INDENT)

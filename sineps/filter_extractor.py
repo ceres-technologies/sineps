@@ -1,5 +1,5 @@
 import json
-from typing import Literal, List, Union
+from typing import Literal
 
 from ._exceptions import FilterExtractorError
 from ._rest_adapter import Response
@@ -18,11 +18,9 @@ class Filter:
 
     def to_dict(self):
         return {
-            "Filter": {
-                "type": self.type,
-                "operator": self.operator,
-                "value": self.value,
-            }
+            "type": self.type,
+            "operator": self.operator,
+            "value": self.value,
         }
 
     def __repr__(self):
@@ -53,11 +51,9 @@ class ConjunctedFilter:
 
     def to_dict(self):
         return {
-            "ConjunctedFilter": {
-                "type": self.type,
-                "conjunction": self.conjunction,
-                "filters": [filter.to_dict() for filter in self.filters],
-            }
+            "type": self.type,
+            "conjunction": self.conjunction,
+            "filters": [filter.to_dict() for filter in self.filters],
         }
 
     def __repr__(self):
@@ -90,7 +86,7 @@ class FilterExtractorResponse:
         return result
 
     def to_dict(self):
-        return {"FilterExtractorResponse": {"result": self.result.to_dict()}}
+        return {"result": self.result.to_dict()}
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=INDENT)
