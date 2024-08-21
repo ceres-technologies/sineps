@@ -64,6 +64,8 @@ class FilterExtractorResponse:
 
     def _get_result(self, data):
         result_dict = data["result"]
+        if result_dict == {}:
+            return {}
 
         if result_dict["type"] == "ConjunctedFilter":
             result = ConjunctedFilter(
