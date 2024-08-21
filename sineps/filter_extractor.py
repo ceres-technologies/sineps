@@ -1,17 +1,12 @@
 import json
-from typing import Literal
-
 from ._exceptions import FilterExtractorError
 from ._rest_adapter import Response
 
 INDENT = 2
 
-operator_type = Literal["=", "!=", ">", ">=", "<", "<=", "CONTAIN", "NOT CONTAIN"]
-conjunction_type = Literal["AND", "OR"]
-
 
 class Filter:
-    def __init__(self, operator: operator_type, value: str):
+    def __init__(self, operator, value: str):
         self.type = "Filter"
         self.operator = operator
         self.value = value
@@ -31,7 +26,7 @@ class Filter:
 
 
 class ConjunctedFilter:
-    def __init__(self, conjunction: conjunction_type, filters_dict):
+    def __init__(self, conjunction, filters_dict):
         self.type = "ConjunctedFilter"
         self.conjunction = conjunction
         self.filters = self._get_filters(filters_dict)

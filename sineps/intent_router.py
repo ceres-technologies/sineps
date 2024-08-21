@@ -1,4 +1,3 @@
-from typing import List, Union
 import json
 
 from ._rest_adapter import Response
@@ -12,8 +11,8 @@ class Route:
         self,
         name: str,
         description: str,
-        utterances: List[str] = [],
-        index: Union[int, None] = None,
+        utterances=[],
+        index=None,
     ):
         self.index = index
         self.name = name
@@ -50,7 +49,7 @@ class Route:
 
 
 class Routes:
-    def __init__(self, routes: List[Route]):
+    def __init__(self, routes: list[Route]):
         self.routes = routes
 
     def to_dict(self):
@@ -64,7 +63,7 @@ class Routes:
 
 
 class IntentRouterResponse:
-    def __init__(self, response: Response, all_routes: List[dict]):
+    def __init__(self, response: Response, all_routes: list[dict]):
         self.result = self._get_result(response.data, all_routes)
 
     def _get_result_route_indices(self, data):
