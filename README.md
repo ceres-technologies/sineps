@@ -58,8 +58,8 @@ routes = [
 # Default option is to choose only a route.
 res = client.exec_intent_router(query=query, routes=routes)
 
-print(f"The chosen route: {res.chosen.routes[0].name}")
-print(f"Index of the route: {res.chosen.routes[0].index}")
+print(f"The chosen route: {res.result.routes[0].name}")
+print(f"Index of the route: {res.result.routes[0].index}")
 ```
 The output will be as follows:
 ```sh
@@ -86,7 +86,7 @@ field = {
 
 response = client.exec_filter_extractor(query=query, field=field)
 
-print(f"{json.dumps(response.filter, indent=2)}")
+print(response.result)
 ```
 The output will be as follows:
 ```sh

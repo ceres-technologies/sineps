@@ -18,7 +18,7 @@ from ._exceptions import (
 from ._utils import handle_error_message
 
 
-class Result:
+class Response:
     def __init__(self, status_code: int, message: str = "", data: List[Dict] = None):
         self.status_code = int(status_code)
         self.message = str(message)
@@ -132,7 +132,7 @@ class RestAdapter(BaseRestAdapter):
             data_out = response.json()
         except (ValueError, JSONDecodeError) as e:
             self._logger.error(msg=log_line_post.format(False, None, e))
-            raise self._exception_class("Bad JSON in response") from e
+            raise self._exception_class(f"{response.status_code}") from e
 
         is_success = 299 >= response.status_code >= 200
         message = handle_error_message(is_success, data_out)
@@ -144,19 +144,21 @@ class RestAdapter(BaseRestAdapter):
             self._exception_class,
         )
 
-        return Result(response.status_code, message=message, data=data_out)
+        return Response(response.status_code, message=message, data=data_out)
 
-    def get(self, endpoint: str, ep_params: Dict = None) -> Result:
+    def get(self, endpoint: str, ep_params: Dict = None) -> Response:
         return self._do(http_method="GET", endpoint=endpoint, ep_params=ep_params)
 
-    def post(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+    def post(
+        self, endpoint: str, ep_params: Dict = None, data: Dict = None
+    ) -> Response:
         return self._do(
             http_method="POST", endpoint=endpoint, ep_params=ep_params, data=data
         )
 
     def delete(
         self, endpoint: str, ep_params: Dict = None, data: Dict = None
-    ) -> Result:
+    ) -> Response:
         return self._do(
             http_method="DELETE", endpoint=endpoint, ep_params=ep_params, data=data
         )
@@ -198,7 +200,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                         data_out = await response.json()
                     except (ValueError, JSONDecodeError) as e:
                         self._logger.error(msg=log_line_post.format(False, None, e))
-                        raise self._exception_class("Bad JSON in response") from e
+                        raise self._exception_class(f"{response.status_code}") from e
 
                     is_success = 299 >= response.status >= 200
                     message = handle_error_message(is_success, data_out)
@@ -210,24 +212,24 @@ class AsyncRestAdapter(BaseRestAdapter):
                         self._exception_class(f"{response.status} - {message}"),
                     )
 
-                    return Result(response.status, message=message, data=data_out)
+                    return Response(response.status, message=message, data=data_out)
         except aiohttp.ClientError as e:
             self._logger.error(msg=(str(e)))
             raise self._exception_class("Request failed") from e
 
-    async def get(self, endpoint: str, ep_params: Dict = None) -> Result:
+    async def get(self, endpoint: str, ep_params: Dict = None) -> Response:
         return await self._do(http_method="GET", endpoint=endpoint, ep_params=ep_params)
 
     async def post(
         self, endpoint: str, ep_params: Dict = None, data: Dict = None
-    ) -> Result:
+    ) -> Response:
         return await self._do(
             http_method="POST", endpoint=endpoint, ep_params=ep_params, data=data
         )
 
     async def delete(
         self, endpoint: str, ep_params: Dict = None, data: Dict = None
-    ) -> Result:
+    ) -> Response:
         return await self._do(
             http_method="DELETE", endpoint=endpoint, ep_params=ep_params, data=data
         )

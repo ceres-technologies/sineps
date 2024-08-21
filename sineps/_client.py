@@ -1,8 +1,9 @@
 import logging
+from typing import Union, List
 
 from ._rest_adapter import RestAdapter, AsyncRestAdapter
 from ._validate import validate_intent_router_format, validate_filter_extractor_format
-from .intent_router import IntentRouterResponse
+from .intent_router import IntentRouterResponse, Routes
 from .filter_extractor import FilterExtractorResponse
 from ._exceptions import APIError, APIConnectionError
 
@@ -32,8 +33,13 @@ class BaseClient:
             raise APIError("SINEPS API key is required")
 
     def exec_intent_router(
-        self, query: str, routes: list = [], allow_none: bool = False
+        self,
+        query: str,
+        routes: Union[Routes, List[dict]] = [],
+        allow_none: bool = False,
     ):
+        if isinstance(routes, Routes):
+            routes = routes.to_dict()
         validate_intent_router_format(query, routes, allow_none)
         data = {"query": query, "routes": routes, "allow_none": allow_none}
         return data
@@ -64,7 +70,10 @@ class Client(BaseClient):
         )
 
     def exec_intent_router(
-        self, query: str, routes: list = [], allow_none: bool = False
+        self,
+        query: str,
+        routes: Union[Routes, List[dict]] = [],
+        allow_none: bool = False,
     ):
         data = super().exec_intent_router(query, routes, allow_none)
         result = self._rest_adapter.post("/intent-router", data=data)
@@ -96,7 +105,10 @@ class AsyncClient(BaseClient):
         )
 
     async def exec_intent_router(
-        self, query: str, routes: list = [], allow_none: bool = False
+        self,
+        query: str,
+        routes: Union[Routes, List[dict]] = [],
+        allow_none: bool = False,
     ):
         data = super().exec_intent_router(query, routes, allow_none)
         result = await self._rest_adapter.post("/intent-router", data=data)
