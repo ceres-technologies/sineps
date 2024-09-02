@@ -74,9 +74,7 @@ import os
 
 client = sineps.Client(os.environ.get("SINEPS_API_KEY"))
 
-query = (
-    "Find articles about the impact of Large language models on jobs and the economy, published in 2024",
-)
+query = "Find articles about the impact of Large language models on jobs and the economy, published in 2024"
 
 field = {
     "name": "published_date",

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="sineps",
-    version="0.0.17",
+    version="0.0.18",
     author="Ceres Technologies",
     author_email="infosec@sineps.io",
     description="The official Python library for the sineps API",
