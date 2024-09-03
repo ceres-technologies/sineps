@@ -15,8 +15,5 @@ setuptools.setup(
     python_requires=">=3.6",
     license=" ",
     url=" ",
-    install_requires=[
-        "requests>=2.24.0",
-        "aiohttp>=3.6.2",
-    ],
+    install_requires=["requests>=2.24.0", "aiohttp>=3.6.2", "python-dateutil>=2.9.0"],
 )
