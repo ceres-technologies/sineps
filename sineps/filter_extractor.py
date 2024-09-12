@@ -1,8 +1,44 @@
 import json
 from ._exceptions import FilterExtractorError
 from ._rest_adapter import Response
+import re
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
+
 
 INDENT = 2
+
+
+def calculate_date(current_date: date, expression: str) -> date:
+    match = re.match(r"\$\{\s*current_date\s*([+-])\s*(.*?)\s*\}", expression)
+    if not match:
+        raise ValueError("Wrong date expression format.")
+    operation = match.group(1)
+    changes = match.group(2)
+
+    changes_matches = re.findall(r"(\d+)([ymd])", changes)
+
+    result_date = current_date
+
+    for change in changes_matches:
+        value = int(change[0])
+        unit = change[1]
+
+        if unit == "y":
+            delta = relativedelta(years=value)
+        elif unit == "m":
+            delta = relativedelta(months=value)
+        elif unit == "d":
+            delta = timedelta(days=value)
+        else:
+            raise ValueError("Wrong date expression format.")
+
+        if operation == "-":
+            result_date -= delta
+        else:
+            result_date += delta
+
+    return result_date
 
 
 class Filter:
@@ -19,10 +55,10 @@ class Filter:
         }
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
 
 class ConjunctedFilter:
@@ -52,10 +88,10 @@ class ConjunctedFilter:
         }
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
 
 class FilterExtractorResponse:
@@ -86,7 +122,7 @@ class FilterExtractorResponse:
         return {"result": self.result.to_dict()}
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
