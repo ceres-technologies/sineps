@@ -43,10 +43,10 @@ class Route:
         }
 
     def __repr__(self, indent=INDENT):
-        return json.dumps(self.to_dict(), indent=indent)
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
 
     def __str__(self, indent=INDENT):
-        return json.dumps(self.to_str_dict(), indent=indent)
+        return json.dumps(self.to_str_dict(), indent=indent, ensure_ascii=False)
 
 
 class Routes:
@@ -57,10 +57,10 @@ class Routes:
         return [route.to_dict() for route in self.routes]
 
     def __repr__(self, indent=INDENT):
-        return json.dumps(self.to_dict(), indent=indent)
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
 
     def __str__(self, indent=INDENT):
-        return json.dumps(self.to_dict(), indent=indent)
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
 
 
 class IntentRouterResponse:
@@ -88,7 +88,7 @@ class IntentRouterResponse:
         return {"result": self.result.to_dict()}
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)

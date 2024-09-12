@@ -55,10 +55,10 @@ class Filter:
         }
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
 
 class ConjunctedFilter:
@@ -88,10 +88,10 @@ class ConjunctedFilter:
         }
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
 
 class FilterExtractorResponse:
@@ -122,7 +122,7 @@ class FilterExtractorResponse:
         return {"result": self.result.to_dict()}
 
     def __repr__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=INDENT)
+        return json.dumps(self.to_dict(), indent=INDENT, ensure_ascii=False)
